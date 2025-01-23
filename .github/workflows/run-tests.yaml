@@ -24,5 +24,20 @@ jobs:
       - name: Sync dependencies
         run: rye sync
 
-      - name: Run tests
-        run: rye test -- -vv -s
+      - name: Install coverage
+        run: rye install coverage
+
+      - name: Run tests with coverage
+        run: rye run coverage run -m pytest -vv -s
+
+      - name: Generate coverage report
+        run: rye run coverage report
+
+      - name: Generate HTML coverage report
+        run: rye run coverage html
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-html
+          path: htmlcov
