@@ -24,6 +24,8 @@ charset-normalizer==3.4.1
 comm==0.2.2
     # via image-classification
     # via ipykernel
+coverage==7.6.10
+    # via image-classification
 debugpy==1.8.11
     # via image-classification
     # via ipykernel
