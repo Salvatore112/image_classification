@@ -155,6 +155,8 @@ stack-data==0.6.3
     # via ipython
 statsmodels==0.14.4
     # via image-classification
+tabulate==0.9.0
+    # via image-classification
 threadpoolctl==3.5.0
     # via image-classification
     # via scikit-learn

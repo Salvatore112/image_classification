@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Any
+from tabulate import tabulate
 
 import cv2
 import joblib
@@ -174,15 +175,34 @@ class ClassifierUtil:
         classifier.fit(X_train, y_train)
         joblib.dump(classifier, self.cfg.path_to_save / f"{MODEL_NAME}.pkl")
 
-    def predict(self):
+    def predict(self) -> dict[str, float]:
         classifier = joblib.load(self.cfg.model_path)
         image = cv2.imread(str(self.cfg.img_path))
         assert image is not None
 
         features_list = self._get_features(image)
-        feature = np.array([features_list])
-        probabilities = classifier.predict_proba(feature)
+        features_df = pd.DataFrame([features_list], columns=self._get_feature_names())
+        probabilities = classifier.predict_proba(features_df)
         return {
             class_name: prob
             for class_name, prob in zip(classifier.classes_, probabilities[0])
         }
+
+    @staticmethod
+    def render_predict_res(pred_dict: dict[str, float]):
+
+        raw_results = [(name, val) for name, val in pred_dict.items()]
+
+        print(
+
+        )
+
+        print(
+            f'Answer: {max(raw_results, key=lambda x: x[1])[0]}\n'
+            f'All results:\n{tabulate(
+                raw_results,
+                floatfmt=".2f",
+                showindex=False,
+                tablefmt="psql",
+            )}\n'
+        )
