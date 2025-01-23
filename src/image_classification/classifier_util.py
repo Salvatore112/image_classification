@@ -16,23 +16,13 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 
-from image_classification import RANDOM_SEED, TEST_SIZE, MODEL_NAME
-from image_classification.classifier import IClassifier, ImageClassifier
-from image_classification.features import (
-    IFeature,
-    AmountOfYellow,
-    AmountOfSilver,
-    AmountOfParallelLines,
-    AmountOfCylinders,
-    AmountOfReflections,
-    AmountOfTransparency,
-    AmountOfTextureSmoothness,
-    AmountOfTextureShininess,
-    AmountOfSurfaceAnisotropy,
-    AmountOfAspectRatio,
-    AmountOfWhiteness,
-    AmountOfLineCurvature,
+from image_classification import (
+    RANDOM_SEED,
+    TEST_SIZE,
+    MODEL_NAME,
+    PATH_TO_DEFAULT_MODULE,
 )
+from image_classification.classifier import IClassifier, ImageClassifier
 
 
 class RunMode(Enum):
@@ -55,7 +45,7 @@ class CFG:
     img_path: Path | None
     model_path: Path | None
     dataset_path: Path | None
-    path_to_save: Path | None
+    path_to_save: Path | None = PATH_TO_DEFAULT_MODULE
 
     @staticmethod
     def add_arguments(parser: ArgumentParser):
