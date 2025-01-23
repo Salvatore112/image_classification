@@ -16,9 +16,9 @@ def main():
 
     match cfg.mode:
         case RunMode.FIT:
-            classifier_util.fit()
+            classifier_util.fit_action()
         case RunMode.PREDICT:
-            res = classifier_util.predict()
+            res = classifier_util.predict_action()
             print(ClassifierUtil.render_predict_res(res))
         case _:
             raise ValueError(f"Invalid mode: {cfg.mode}")

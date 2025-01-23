@@ -7,7 +7,7 @@ import numpy as np
 from skimage.feature import graycomatrix, graycoprops
 
 
-class Feature(Protocol):
+class IFeature(Protocol):
     @abstractmethod
     def __call__(self, image: np.ndarray) -> Any: ...
 
@@ -16,7 +16,7 @@ class Feature(Protocol):
     def name() -> str: ...
 
 
-class AmountOfYellow(Feature):
+class AmountOfYellow(IFeature):
     def __call__(self, image: np.ndarray) -> Any:
         """Calculate the amount of yellow color in the image."""
 
@@ -32,7 +32,7 @@ class AmountOfYellow(Feature):
         return "yellow_amount"
 
 
-class AmountOfSilver(Feature):
+class AmountOfSilver(IFeature):
     def __call__(self, image: np.ndarray) -> Any:
         """Calculate the amount of silver color in the image."""
         hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -47,7 +47,7 @@ class AmountOfSilver(Feature):
         return "silver_amount"
 
 
-class AmountOfParallelLines(Feature):
+class AmountOfParallelLines(IFeature):
     def __call__(self, image: np.ndarray) -> Any:
         """Calculate the amount of parallel lines in the image."""
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -61,7 +61,7 @@ class AmountOfParallelLines(Feature):
         return "parallel_lines"
 
 
-class AmountOfCylinders(Feature):
+class AmountOfCylinders(IFeature):
     def __call__(self, image: np.ndarray) -> Any:
         """Detect cylindrical shapes in the image."""
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -84,7 +84,7 @@ class AmountOfCylinders(Feature):
         return "cylinder_count"
 
 
-class AmountOfReflections(Feature):
+class AmountOfReflections(IFeature):
     def __call__(self, image: np.ndarray) -> Any:
         """Calculate the amount of bright areas in the image to detect reflections."""
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -97,7 +97,7 @@ class AmountOfReflections(Feature):
         return "reflection_amount"
 
 
-class AmountOfTransparency(Feature):
+class AmountOfTransparency(IFeature):
     def __call__(self, image: np.ndarray) -> Any:
         """
         Calculate the amount of transparent areas in the image.
@@ -115,7 +115,7 @@ class AmountOfTransparency(Feature):
         return "transparency_amount"
 
 
-class AmountOfTextureSmoothness(Feature):
+class AmountOfTextureSmoothness(IFeature):
     def __call__(self, image: np.ndarray) -> Any:
         """Calculate the smoothness of the texture in the image."""
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -128,7 +128,7 @@ class AmountOfTextureSmoothness(Feature):
         return "texture_smoothness"
 
 
-class AmountOfTextureShininess(Feature):
+class AmountOfTextureShininess(IFeature):
     def __call__(self, image: np.ndarray) -> Any:
         """Calculate the shininess of the image based on bright pixels."""
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -144,7 +144,7 @@ class AmountOfTextureShininess(Feature):
         return "shininess"
 
 
-class AmountOfSurfaceAnisotropy(Feature):
+class AmountOfSurfaceAnisotropy(IFeature):
     def __call__(self, image: np.ndarray) -> Any:
         """
         Calculate the anisotropy of the surface using Gabor filters.
@@ -184,7 +184,7 @@ class AmountOfSurfaceAnisotropy(Feature):
         return "surface_anisotropy"
 
 
-class AmountOfAspectRatio(Feature):
+class AmountOfAspectRatio(IFeature):
     def __call__(self, image: np.ndarray) -> Any:
         """
         Calculate the average width-to-height ratio of detected objects in the image.
@@ -213,7 +213,7 @@ class AmountOfAspectRatio(Feature):
         return "aspect_ratio"
 
 
-class AmountOfWhiteness(Feature):
+class AmountOfWhiteness(IFeature):
     def __call__(self, image: np.ndarray) -> Any:
         """Calculate the proportion of white pixels in the image."""
         hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -228,7 +228,7 @@ class AmountOfWhiteness(Feature):
         return "whiteness"
 
 
-class AmountOfLineCurvature(Feature):
+class AmountOfLineCurvature(IFeature):
     def __call__(self, image: np.ndarray) -> Any:
         """
         Calculate the average curvature of detected edges in the image.

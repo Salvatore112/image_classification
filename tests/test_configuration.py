@@ -62,7 +62,7 @@ class TestUI:
         for k, v in value.items():
             idx = next((i for i, line in enumerate(res) if line.find(k) != -1), -1)
             if idx != -1:
-                assert res[idx].find(f'{round(value[k], 2)}') != -1
+                assert res[idx].find(f"{round(value[k], 2)}") != -1
                 checked_values.add(k)
 
         assert len(checked_values) == len(value)
