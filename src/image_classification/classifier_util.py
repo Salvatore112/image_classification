@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass
 from enum import Enum
@@ -9,19 +8,8 @@ from typing import Any
 from tabulate import tabulate
 
 import cv2
-import joblib
-import numpy as np
-import pandas as pd
 
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-
-from image_classification import (
-    RANDOM_SEED,
-    TEST_SIZE,
-    MODEL_NAME,
-    PATH_TO_DEFAULT_MODULE,
-)
+from image_classification import PATH_TO_DEFAULT_MODULE
 from image_classification.classifier import IClassifier, ImageClassifier
 
 
