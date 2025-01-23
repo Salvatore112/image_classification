@@ -189,15 +189,9 @@ class ClassifierUtil:
         }
 
     @staticmethod
-    def render_predict_res(pred_dict: dict[str, float]):
-
+    def render_predict_res(pred_dict: dict[str, float]) -> str:
         raw_results = [(name, val) for name, val in pred_dict.items()]
-
-        print(
-
-        )
-
-        print(
+        return(
             f'Answer: {max(raw_results, key=lambda x: x[1])[0]}\n'
             f'All results:\n{tabulate(
                 raw_results,

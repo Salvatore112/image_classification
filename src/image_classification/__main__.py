@@ -19,7 +19,7 @@ def main():
             classifier_util.fit()
         case RunMode.PREDICT:
             res = classifier_util.predict()
-            ClassifierUtil.render_predict_res(res)
+            print(ClassifierUtil.render_predict_res(res))
         case _:
             raise ValueError(f"Invalid mode: {cfg.mode}")
 
