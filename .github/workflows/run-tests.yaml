@@ -21,18 +21,23 @@ jobs:
         with:
           enable-cache: true
 
-      - name: Sync dependencies and install coverage
-        run: |
-          rye sync
-          rye add coverage # Добавляем coverage как зависимость проекта
+      - name: Sync dependencies
+        run: rye sync
+
+      - name: Install test dependencies
+        run: rye add coverage pytest
 
       - name: Run tests with coverage
-        run: rye run coverage run -m pytest -- -vv -s # Запускаем тесты через coverage run и pytest
+        run: rye run python -m coverage run --source=image_classification --omit=*/__main__.py -m pytest -vv -s
 
       - name: Generate coverage report
-        run: rye run coverage xml # Генерируем отчет в формате XML для Codecov
+        run: rye run python -m coverage report --fail-under=0
 
-      - name: Upload coverage to Codecov (optional)
-        uses: codecov/codecov-action@v4
+      - name: Generate HTML coverage report
+        run: rye run python -m coverage html
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
         with:
-          fail_ci_if_error: false # Не ломаем CI, если не удается загрузить отчет
+          name: coverage-html
+          path: htmlcov
