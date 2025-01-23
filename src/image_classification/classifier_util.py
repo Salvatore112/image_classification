@@ -1,22 +1,36 @@
 from __future__ import annotations
 
-from abc import abstractmethod
+import os
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Protocol, Any
+from typing import Any
 
+import cv2
+import joblib
 import numpy as np
+import pandas as pd
 
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
 
-class Feature(Protocol):
-    @abstractmethod
-    def __call__(self, image: np.ndarray) -> Any: ...
-
-    @staticmethod
-    @abstractmethod
-    def get_name() -> str: ...
+from image_classification import RANDOM_SEED, TEST_SIZE, MODEL_NAME
+from image_classification.features import (
+    Feature,
+    AmountOfYellow,
+    AmountOfSilver,
+    AmountOfParallelLines,
+    AmountOfCylinders,
+    AmountOfReflections,
+    AmountOfTransparency,
+    AmountOfTextureSmoothness,
+    AmountOfTextureShininess,
+    AmountOfSurfaceAnisotropy,
+    AmountOfAspectRatio,
+    AmountOfWhiteness,
+    AmountOfLineCurvature,
+)
 
 
 class RunMode(Enum):
@@ -96,13 +110,79 @@ class ClassifierUtil:
     def __init__(self, run_cfg: CFG):
         self.validate(run_cfg)
         self.cfg = run_cfg
-
+        self.classes = [
+            "trash",
+            "glass",
+            "battery",
+            "clothes",
+            "metal",
+            "plastic",
+            "cardboard",
+            "paper",
+            "biological",
+            "shoes",
+        ]
         self.features = [
-            # TODO: add features
+            AmountOfYellow(),
+            AmountOfSilver(),
+            AmountOfParallelLines(),
+            AmountOfCylinders(),
+            AmountOfReflections(),
+            AmountOfTransparency(),
+            AmountOfTextureSmoothness(),
+            AmountOfTextureShininess(),
+            AmountOfSurfaceAnisotropy(),
+            AmountOfAspectRatio(),
+            AmountOfWhiteness(),
+            AmountOfLineCurvature(),
         ]
 
+    def _get_features(self, img: np.ndarray) -> tuple[int, ...]:
+        return tuple([feature(img) for feature in self.features])
+
+    def _get_feature_names(self) -> list[str]:
+        return [feature.name() for feature in self.features]
+
     def fit(self):
-        pass
+        features = []
+        labels = []
+
+        for class_name in self.classes:
+            class_path = self.cfg.dataset_path / class_name
+            image_names = os.listdir(class_path)
+            train_images, test_images_class = train_test_split(
+                image_names, test_size=TEST_SIZE, random_state=RANDOM_SEED
+            )
+
+            for image_name in train_images:
+                image = cv2.imread(class_path / image_name)
+                assert image is not None
+                features_list = self._get_features(image)
+                features.append(features_list)
+                labels.append(class_name)
+
+        # TODO: add ability to check tests
+
+        df = pd.DataFrame(features, columns=self._get_feature_names())
+        df["label"] = labels
+        X = df[self._get_feature_names()]
+        y = df["label"]
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=TEST_SIZE, random_state=RANDOM_SEED
+        )
+        classifier = RandomForestClassifier(n_estimators=100, random_state=RANDOM_SEED)
+        classifier.fit(X_train, y_train)
+        joblib.dump(classifier, self.cfg.path_to_save / f"{MODEL_NAME}.pkl")
 
     def predict(self):
-        pass
+        classifier = joblib.load(self.cfg.model_path)
+        image = cv2.imread(str(self.cfg.img_path))
+        assert image is not None
+
+        features_list = self._get_features(image)
+        feature = np.array([features_list])
+        probabilities = classifier.predict_proba(feature)
+        return {
+            class_name: prob
+            for class_name, prob in zip(classifier.classes_, probabilities[0])
+        }

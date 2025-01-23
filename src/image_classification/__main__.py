@@ -1,6 +1,6 @@
 import argparse
 
-from image_classification.classifier_util import CFG, ClassifierUtil
+from image_classification.classifier_util import CFG, ClassifierUtil, RunMode
 
 
 def get_cfg():
@@ -11,8 +11,16 @@ def get_cfg():
 
 
 def main():
-    classifier_util = ClassifierUtil(get_cfg())
-    print(classifier_util.cfg)
+    cfg = get_cfg()
+    classifier_util = ClassifierUtil(cfg)
+
+    match cfg.mode:
+        case RunMode.FIT:
+            classifier_util.fit()
+        case RunMode.PREDICT:
+            print(classifier_util.predict())
+        case _:
+            raise ValueError(f"Invalid mode: {cfg.mode}")
 
 
 if __name__ == "__main__":
