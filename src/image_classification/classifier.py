@@ -32,17 +32,94 @@ from image_classification.features import (
 
 
 class IClassifier(Protocol):
-    @abstractmethod
-    def predict(self, img: Mat | np.ndarray[Any, np.dtype]) -> dict[Any, float]: ...
+    """
+    Interface for a machine learning classifier. This protocol defines the expected methods
+    for a classifier implementation, including prediction, training, saving, and restoring the model.
+
+    Methods
+    -------
+    predict(img: Mat | np.ndarray[Any, np.dtype]) -> dict[Any, float]
+        Predicts the class probabilities for the given input image.
+
+    fit(train_dataset_path: Path) -> None
+        Trains the classifier using the dataset located at the provided path.
+
+    store(save_path: Path) -> None
+        Saves the trained model to the specified path.
+
+    restore(model_path: Path) -> None
+        Restores a previously saved model from the specified path.
+    """
 
     @abstractmethod
-    def fit(self, train_dataset_path: Path): ...
+    def predict(self, img: Mat | np.ndarray[Any, np.dtype]) -> dict[Any, float]:
+        """
+        Predicts the class probabilities for the given input image.
+
+        Parameters
+        ----------
+        img : np.ndarray[Any, np.dtype]
+            The input image represented as a NumPy array. Supported formats include
+            any 2D or 3D array (e.g., grayscale or RGB images).
+
+        Returns
+        -------
+        dict[Any, float]
+            A dictionary where keys are the predicted class labels and values are their
+            associated probabilities. The probabilities should sum to 1.0.
+        """
+        pass
 
     @abstractmethod
-    def store(self, save_path: Path): ...
+    def fit(self, train_dataset_path: Path):
+        """
+        Trains the classifier using the dataset located at the provided path.
+
+        Parameters
+        ----------
+        train_dataset_path : Path
+            The file system path pointing to the training dataset. The dataset format
+            (e.g., directory of images, CSV file, etc.) is implementation-specific.
+
+        Returns
+        -------
+        None
+        """
+        pass
 
     @abstractmethod
-    def restore(self, model_path: Path): ...
+    def store(self, save_path: Path):
+        """
+        Saves the trained model to the specified path.
+
+        Parameters
+        ----------
+        save_path : Path
+            The file system path where the model should be saved. The format of the
+            saved model (e.g., .pkl) is implementation-specific.
+
+        Returns
+        -------
+        None
+        """
+        pass
+
+    @abstractmethod
+    def restore(self, model_path: Path):
+        """
+        Restores a previously saved model from the specified path.
+
+        Parameters
+        ----------
+        model_path : Path
+            The file system path to the saved model file. The file format and loading
+            logic are implementation-specific.
+
+        Returns
+        -------
+        None
+        """
+        pass
 
 
 class ImageClassifier(IClassifier):

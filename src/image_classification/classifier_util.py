@@ -14,6 +14,18 @@ from image_classification.classifier import IClassifier, ImageClassifier
 
 
 class RunMode(Enum):
+    """
+    Enum representing the available modes of operation for the application.
+
+    Attributes
+    ----------
+    FIT : str
+        Represents the training mode, where a model is trained on a dataset.
+
+    PREDICT : str
+        Represents the prediction mode, where a trained model is used to make predictions.
+    """
+
     FIT = "fit"
     PREDICT = "predict"
 
@@ -29,6 +41,52 @@ class RunMode(Enum):
 
 @dataclass(frozen=True)
 class CFG:
+    """
+    Configuration class for managing the parameters required to run the application.
+
+    This class defines the structure of the configuration used for various modes of operation
+    (e.g., training, prediction). It is immutable (`frozen=True`) and can be initialized
+    either programmatically or via command-line arguments.
+
+    Attributes
+    ----------
+    mode : RunMode
+        The mode in which the application will run. Possible values are defined in the `RunMode` enum.
+        Examples include `RunMode.FIT` for training and `RunMode.PREDICT` for inference.
+
+    img_path : Path | None
+        The path to the image used for prediction, if applicable. Optional and can be `None`
+        if not required in the current mode.
+
+    model_path : Path | None
+        The path to the pre-trained model file. Required for modes that involve loading a model
+        (e.g., `RunMode.PREDICT`).
+
+    dataset_path : Path | None
+        The path to the training dataset. Required for modes that involve training a model
+        (e.g., `RunMode.FIT`).
+
+    path_to_save : Path | None
+        The path where the trained model or output should be saved. Defaults to
+        `PATH_TO_DEFAULT_MODULE` if not explicitly provided.
+
+    Methods
+    -------
+    add_arguments(parser: ArgumentParser) -> None
+        Adds command-line argument definitions to the provided ArgumentParser instance.
+        This method defines arguments corresponding to the attributes of the `CFG` class.
+
+    get_config(args: Namespace) -> CFG
+        Creates a `CFG` instance by extracting values from the given `argparse.Namespace`.
+        This is typically used to convert parsed command-line arguments into a configuration object.
+
+    Notes
+    -----
+    - This class is designed to work seamlessly with `argparse` for command-line argument parsing.
+    - The `RunMode` enum should define the valid operational modes (`FIT`, `PREDICT`, etc.).
+    - The `PATH_TO_DEFAULT_MODULE` serves as the default save path if `path_to_save` is not specified.
+    """
+
     mode: RunMode
     img_path: Path | None
     model_path: Path | None
@@ -95,7 +153,6 @@ class ClassifierUtil:
     def fit_action(self):
         self.classifier.fit(self.cfg.dataset_path)
         self.classifier.store(self.cfg.path_to_save)
-        # TODO: add ability to check tests
 
     def predict_action(self) -> dict[str, float]:
         self.classifier.restore(self.cfg.model_path)

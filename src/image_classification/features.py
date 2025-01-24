@@ -8,12 +8,57 @@ from skimage.feature import graycomatrix, graycoprops
 
 
 class IFeature(Protocol):
+    """
+    Interface for feature extraction from images. This protocol defines the expected methods
+    for any feature extractor implementation, allowing users to extract meaningful data from
+    input images.
+
+    Methods
+    -------
+    __call__(image: np.ndarray) -> Any
+        Extracts features from the given input image.
+
+    name() -> str
+        Returns the name of the feature extractor.
+    """
+
     @abstractmethod
-    def __call__(self, image: np.ndarray) -> Any: ...
+    def __call__(self, image: np.ndarray) -> Any:
+        """
+        Extracts features from the given input image.
+
+        Parameters
+        ----------
+        image : np.ndarray
+            The input image represented as a NumPy array. Supported formats include
+            any 2D or 3D array (e.g., grayscale or RGB images). The exact preprocessing
+            requirements (e.g., resizing, normalization) depend on the implementation.
+
+        Returns
+        -------
+        Any
+            The extracted features from the image. The features can be of any type,
+            such as a NumPy array, list, dictionary, int, or custom object, depending on
+            the implementation.
+        """
+        pass
 
     @staticmethod
     @abstractmethod
-    def name() -> str: ...
+    def name() -> str:
+        """
+        Returns the name of the feature extractor.
+
+        This method provides a human-readable identifier for the feature extractor,
+        which can be useful for logging, debugging, or distinguishing between different
+        feature extraction methods.
+
+        Returns
+        -------
+        str
+            The name of the feature extractor.
+        """
+        pass
 
 
 class AmountOfYellow(IFeature):
