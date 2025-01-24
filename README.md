@@ -74,4 +74,3 @@ python src/image_classification fit -s <SAVE_DIR> -d garbage-dataset/
 **NB:** Классификатор и тестирование производилось с зафиксированным сидом 42 для разбиения датасета на тестовую и тренировочную выборку
 
 </details>
-
